@@ -7,8 +7,8 @@ import {
 import {
   useLoaderData,
   useActionData,
-  useNavigate,
   Form,
+  Link,
 } from "@remix-run/react";
 import { FC } from "react";
 import { IoIosArrowBack } from "react-icons/io";
@@ -132,14 +132,11 @@ const CompleteOrderPage: FC = () => {
   //  Получаем результат выполнения action
   const data = useActionData<typeof action>();
 
-  const navigate = useNavigate();
-
   return (
     <div className="flex flex-col gap-4 h-full w-full p-4">
-      <IoIosArrowBack
-        onClick={() => navigate(-1)}
-        className="font-bold text-2xl"
-      />
+      <Link to="/">
+        <IoIosArrowBack className="font-bold text-2xl" />
+      </Link>
       <div className="flex flex-row grow items-center justify-center">
         <div className="flex flex-col gap-16 border border-slate-200 shadow-md p-4 rounded-md">
           <div>

@@ -1,5 +1,5 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
-import { Link, useLoaderData, useNavigate } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 import { FC } from "react";
 import { IoIosArrowBack } from "react-icons/io";
 import { authenticator } from "~/services/auth";
@@ -47,23 +47,18 @@ const ProfilePage: FC = () => {
   // Получаем необходимые данные с сервера loader
   const { user } = useLoaderData<typeof loader>();
 
-  const navigate = useNavigate();
-
   return (
     <div className="flex flex-col gap-4 h-full w-full p-4">
-      <IoIosArrowBack
-        onClick={() => navigate(-1)}
-        className="font-bold text-2xl"
-      />
+      <Link to="/">
+        <IoIosArrowBack className="font-bold text-2xl" />
+      </Link>
 
       <div className="flex flex-row grow items-center justify-center">
         <div className="flex flex-row gap-16 border border-slate-200 shadow-md p-4 rounded-md max-w-3xl">
           <div className="flex flex-col gap-2 border-r border-slate-200 p-4 shrink-0">
-            <p className="text-sm">#{user?.id}</p>
-
-            <h1 className="space-x-2 text-lg font-semibold">
-              <p className="inline-block">{user?.first_name}</p>
+            <h1 className="space-x-1 text-lg font-semibold">
               <p className="inline-block">{user?.middle_name}</p>
+              <p className="inline-block">{user?.first_name}</p>
               <p className="inline-block">{user?.last_name}</p>
             </h1>
 
@@ -73,6 +68,9 @@ const ProfilePage: FC = () => {
             <p className="text-sm">Email: {user?.email}</p>
             <p className="text-sm">Гендер: {user?.gender}</p>
             <p className="text-sm">Телефон: {user?.phone}</p>
+            <p className="text-sm">
+              Зарегистрирован: {new Date(user!.createdAt).toLocaleDateString()}
+            </p>
           </div>
           <div className="flex flex-col gap-2 items-center h-full justify-center w-full p-4">
             <h1>История заказов</h1>

@@ -1,5 +1,5 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
-import { Link, json, useLoaderData, useNavigate } from "@remix-run/react";
+import { Link, json, useLoaderData } from "@remix-run/react";
 import { FC } from "react";
 import { IoIosArrowBack } from "react-icons/io";
 import { Button } from "~/components/ui/button";
@@ -27,14 +27,11 @@ const ProfileCartPage: FC = () => {
   // Получаем данные с сервера loader
   const { cart } = useLoaderData<typeof loader>();
 
-  const navigate = useNavigate();
-
   return (
     <div className="flex flex-col gap-4 h-full w-full p-4">
-      <IoIosArrowBack
-        onClick={() => navigate(-1)}
-        className="font-bold text-2xl"
-      />
+      <Link to="/">
+        <IoIosArrowBack className="font-bold text-2xl" />
+      </Link>
       <div className="flex flex-row grow items-center justify-center">
         <div className="flex flex-row gap-16 border border-slate-200 shadow-md p-4 pl-0 rounded-md h-[500px]">
           <div

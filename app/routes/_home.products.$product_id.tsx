@@ -1,10 +1,10 @@
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { LoaderFunctionArgs, json, redirect } from "@remix-run/node";
 import {
+  Link,
   useActionData,
   useFetcher,
   useLoaderData,
-  useNavigate,
 } from "@remix-run/react";
 import { Button } from "~/components/ui/button";
 import { db } from "~/services/db";
@@ -140,7 +140,6 @@ const ProductItemPage = () => {
   const data = useActionData<typeof action>();
 
   const fetcher = useFetcher<typeof action>();
-  const navigate = useNavigate();
 
   if (!product) {
     return <div>Продукт не найден</div>;
@@ -148,10 +147,9 @@ const ProductItemPage = () => {
 
   return (
     <div className="flex flex-col gap-4 h-full w-full p-4">
-      <IoIosArrowBack
-        onClick={() => navigate(-1)}
-        className="font-bold text-2xl"
-      />
+      <Link to="/">
+        <IoIosArrowBack className="font-bold text-2xl" />
+      </Link>
       <div className="flex flex-col items-center justify-center h-full ">
         <div className="flex flex-row gap-16 max-w-3xl">
           <img

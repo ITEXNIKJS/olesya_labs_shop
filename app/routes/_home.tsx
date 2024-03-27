@@ -1,5 +1,5 @@
 import { LoaderFunctionArgs } from "@remix-run/node";
-import { Outlet, json, useLoaderData } from "@remix-run/react";
+import { Link, Outlet, json, useLoaderData } from "@remix-run/react";
 import { FC } from "react";
 import { authenticator } from "~/services/auth";
 import { FaStoreAlt } from "react-icons/fa";
@@ -41,11 +41,13 @@ const HomeLayout: FC = () => {
   return (
     <div className="flex flex-col h-screen">
       {/* Header */}
-      <div className="flex flex-row justify-between min-h-12 p-4 border-slate-300 border-b shrink-0">
-        <div className="flex flex-row gap-2 items-center">
-          <FaStoreAlt size={24} />
-          <h1 className="text-lg font-bold">Online Shop</h1>
-        </div>
+      <div className="flex flex-row justify-between items-center min-h-12 p-4 border-slate-300 border-b shrink-0">
+        <Link to="/">
+          <div className="flex flex-row gap-2 items-center">
+            <FaStoreAlt size={24} />
+            <h1 className="text-lg font-bold">Online Shop</h1>
+          </div>
+        </Link>
         {/* User button component */}
         <div className="flex flex-row gap-4 items-center">
           <UserButton user={user} />
