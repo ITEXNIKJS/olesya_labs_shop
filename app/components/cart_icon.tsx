@@ -3,11 +3,14 @@ import { FaCartShopping } from "react-icons/fa6";
 import { Button } from "./ui/button";
 import { Link } from "@remix-run/react";
 
+// Интерфейс входных параметров компонента иконки корзины на вход принимает кол-во товаров
 interface CartIconProps {
   count: number;
 }
 
+// Компонент иконки корзины отображает иконку и кол-во товаров в корзине
 const CartIcon: FC<CartIconProps> = (props) => {
+  // Поле count отображает кол-во товаров
   const { count } = props;
 
   return (

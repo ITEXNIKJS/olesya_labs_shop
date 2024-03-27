@@ -5,12 +5,16 @@ import { FormStrategy } from "remix-auth-form";
 import { db } from "../db";
 import argon2 from "argon2";
 
+// Создаём новый аутентификатор с помощью стратегии "user-pass"
 export const authenticator = new Authenticator<Pick<users, "id">>(
   sessionStorage,
 );
 
+
+// Стратегия "user-pass" и её логика
 authenticator.use(
   new FormStrategy(async ({ form }) => {
+    // Логин и пароль из формы
     const email = form.get("email") as string;
     const password = form.get("password") as string;
 
@@ -18,6 +22,7 @@ authenticator.use(
       throw new Error("Логин и пароль обязательны");
     }
 
+    // Поиск пользователя в базе данных
     const user = await db.users.findUnique({
       where: {
         email,
@@ -28,6 +33,7 @@ authenticator.use(
       throw new Error("Неверный логин или пароль");
     }
 
+    // Проверка пароля
     const isPasswordMatch = argon2.verify(user.password, password);
 
     if (!isPasswordMatch) {

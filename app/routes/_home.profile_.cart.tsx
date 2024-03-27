@@ -15,7 +15,9 @@ import { cn } from "~/lib/utils";
 import { authenticator } from "~/services/auth";
 import { db } from "~/services/db";
 
+// Действия для подтверждения заказа
 export const action = async ({ request }: ActionFunctionArgs) => {
+  //  Проверка аутентификации пользователя
   const user = await authenticator.isAuthenticated(request, {
     failureRedirect: "/login",
   });
@@ -25,6 +27,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const adress = formData.get("address") as string;
   const index = formData.get("index") as string;
 
+  // Валидируем данные формы
   if (!adress) {
     return json(
       { ok: false, errors: { adress: "Нужно заполнить адрес", index: null } },
@@ -39,6 +42,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     );
   }
 
+  // Получаем кол-во продуктов в корзине
   const cart_count = await db.products.count({
     where: {
       cart: { some: { usersId: user.id } },
@@ -52,7 +56,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     );
   }
 
+  // Выполняем действия в виде транзакций чтобы не засорять базу
   await db.$transaction(async (tx) => {
+    //  Получаем все продукты в корзине
     const cart_product = await tx.products.findMany({
       where: { cart: { some: { usersId: user.id } } },
       select: {
@@ -61,8 +67,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       },
     });
 
+    //  Считаем общую стоимость
     const total = cart_product.reduce((acc, product) => acc + product.price, 0);
 
+    //  Сохраняем заказ
     const order = await tx.orders.create({
       data: {
         total,
@@ -75,6 +83,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       },
     });
 
+    //  Подключаем продукты в заказ
     await tx.orders.update({
       where: { id: order.id },
       data: {
@@ -84,6 +93,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       },
     });
 
+    //  Очищаем корзину
     await tx.cart.update({
       where: { usersId: user.id },
       data: {
@@ -97,11 +107,14 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   return json({ ok: true, errors: null });
 };
 
+//  Функция для получения данных с сервера о корзине
 export const loader = async ({ request }: LoaderFunctionArgs) => {
+  //  Проверка аутентификации пользователя
   const user = await authenticator.isAuthenticated(request, {
     failureRedirect: "/login",
   });
 
+  //  Получаем данные о корзине
   const cart = await db.cart.findFirst({
     where: { usersId: user.id },
     include: { products: true },
@@ -111,11 +124,13 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 const ProfileCartPage: FC = () => {
+  // Получаем данные с сервера loader
   const { cart } = useLoaderData<typeof loader>();
 
+  //  Получаем результат выполнения action
   const data = useActionData<typeof action>();
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
     <div className="flex flex-col gap-4 h-full w-full p-4">

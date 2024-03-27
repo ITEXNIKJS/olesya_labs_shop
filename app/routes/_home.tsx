@@ -7,6 +7,7 @@ import UserButton from "~/components/user-button";
 import { db } from "~/services/db";
 import CartIcon from "~/components/cart_icon";
 
+// Действия для получения данных о пользователе и количестве продуктов в корзине
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const user = await authenticator.isAuthenticated(request);
 
@@ -14,15 +15,18 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     return json({ user: null, cart_count: 0 });
   }
 
+  // Ищем пользователя в базе
   const dbUser = await db.users.findUnique({
     where: { id: user?.id },
     include: { cart: true },
   });
 
+  // Если пользователя нет, возвращаем null
   if (!dbUser) {
     return json({ user: null, cart_count: 0 });
   }
 
+  // Подсчитываем количество продуктов в корзине
   const cart_products_count = await db.products.count({
     where: { cart: { some: { usersId: user.id } } },
   });
@@ -31,6 +35,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 const HomeLayout: FC = () => {
+  // Действия для получения данных о пользователе и количестве продуктов в корзине
   const { user, cart_count } = useLoaderData<typeof loader>();
 
   return (

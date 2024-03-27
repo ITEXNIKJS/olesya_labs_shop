@@ -6,6 +6,7 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { authenticator } from "~/services/auth";
 
+// Действие выполняемое на стороне сервера для захвата результата формы
 export const action = async ({ request }: ActionFunctionArgs) => {
   try {
     return await authenticator.authenticate("user-pass", request, {
@@ -21,9 +22,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 const Login: FC = () => {
+  // Переменная для хранения данных о результате выполнения формы
   const data = useActionData<typeof action>();
 
   return (
+    // Форма авторизации
     <Form method="post" className="bg-white p-6 rounded shadow-md w-72">
       <h1 className="text-2xl font-bold mb-4 text-center">Авторизация</h1>
       <div className="mb-4">

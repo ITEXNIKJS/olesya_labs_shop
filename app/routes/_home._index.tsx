@@ -11,6 +11,7 @@ import { Slider } from "~/components/ui/slider";
 
 import { db } from "~/services/db";
 
+// Функция для получения данных с сервера реагирует на первую загрузку страницы а так же на изменение параметров URL
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
   const search = new URLSearchParams(url.search);
@@ -34,7 +35,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
           price: price ? { gte: parseInt(price) } : undefined,
         },
         {
-          ram: ram ? { gte: parseInt(ram) } : undefined,
+          ram: ram ? { equals: parseInt(ram) } : undefined,
         },
         {
           AND: [
@@ -57,16 +58,20 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 const IndexHome: FC = () => {
+  // Переменная для хранения данных о результате выполнения формы
   const data = useLoaderData<typeof loader>();
 
+  //  Хуки и функции для навигации и подтверждения формы
   const navigate = useNavigate();
   const submit = useSubmit();
 
+  // Переменные состояния для хранения данных формы
   const [q, setQ] = useState<string>(data.q || "");
   const [model, setModel] = useState<string>(data.model || "");
   const [price, setPrice] = useState<string>(data.price || "0");
   const [ram, setRam] = useState<string>(data.ram || "");
 
+  // Синхронизация данных формы с URL
   useEffect(() => {
     setQ(data.q || "");
     setModel(data.model || "");
@@ -134,6 +139,10 @@ const IndexHome: FC = () => {
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="4" id="option-one" />
               <Label htmlFor="option-one">4</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="6" id="option-two" />
+              <Label htmlFor="option-two">6</Label>
             </div>
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="8" id="option-two" />

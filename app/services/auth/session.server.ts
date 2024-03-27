@@ -1,5 +1,6 @@
 import { createCookieSessionStorage } from "@remix-run/node";
 
+//  Сессионное хранилище cookie для аутентификации
 export const sessionStorage = createCookieSessionStorage({
   cookie: {
     name: "_session",

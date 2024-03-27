@@ -5,6 +5,7 @@ import { IoIosArrowBack } from "react-icons/io";
 import { authenticator } from "~/services/auth";
 import { db } from "~/services/db";
 
+// Получаем все необходимированные данные пользователя
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const user = await authenticator.isAuthenticated(request, {
     failureRedirect: "/login",
@@ -43,8 +44,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 const ProfilePage: FC = () => {
+  // Получаем необходимые данные с сервера loader
   const { user } = useLoaderData<typeof loader>();
+
   const navigate = useNavigate();
+
   return (
     <div className="flex flex-col gap-4 h-full w-full p-4">
       <IoIosArrowBack
@@ -75,6 +79,7 @@ const ProfilePage: FC = () => {
             {user?.orders.length === 0 ? (
               <span>Заказы не найдены</span>
             ) : (
+              // ПроNavigся по списку заказов и высвечиваем их
               user?.orders.map((order) => (
                 <div
                   key={order.id}
@@ -86,6 +91,7 @@ const ProfilePage: FC = () => {
                     Дата создания: {new Date(order.createdAt).toLocaleString()}
                   </p>
                   <div className="flex flex-row gap-2">
+                    {/* Проходимся по списку продуктов и высвечиваем картинки */}
                     {order.products.map((product) => (
                       <Link to={`/products/${product.id}`} key={product.id}>
                         <img

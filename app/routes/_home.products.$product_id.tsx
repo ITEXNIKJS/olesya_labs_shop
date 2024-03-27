@@ -9,8 +9,9 @@ import {
 import { Button } from "~/components/ui/button";
 import { db } from "~/services/db";
 import { IoIosArrowBack } from "react-icons/io";
-import { authenticator } from "~/services/auth";
+import { authenticator, destroySession, getSession } from "~/services/auth";
 
+// Действия для получения данных о продукте реагирует на первую загрузку страницы
 export const loader = async (request: LoaderFunctionArgs) => {
   const user = await authenticator.isAuthenticated(request.request);
 
@@ -49,11 +50,20 @@ export const loader = async (request: LoaderFunctionArgs) => {
   return json({ product, is_in_cart: already_in_cart ? true : false });
 };
 
-// action to add product to cart
+// Действия для добавления или удаления продукта из корзины реагирует на кнопку
 export const action = async ({ request }: ActionFunctionArgs) => {
   const user = await authenticator.isAuthenticated(request, {
     failureRedirect: "/login",
   });
+
+  const session = await getSession(request.headers.get("Cookie"));
+  if (user === null && session.has("id")) {
+    return redirect("/login", {
+      headers: {
+        "Set-Cookie": await destroySession(session),
+      },
+    });
+  }
 
   const formData = await request.formData();
   const product_id = formData.get("id") as string;
@@ -160,7 +170,7 @@ const ProductItemPage = () => {
             </div>
             <div className="flex flex-col gap-2 mt-auto">
               <p>Артикул: {product.id}</p>
-              <p>Материл кейса: {product.case_material}</p>
+              <p>Материал кейса: {product.case_material}</p>
               <p>Тип кейса: {product.case_type}</p>
               <p>Размер: {product.size}</p>
               <p>Дисплей: {product.display}</p>
@@ -169,6 +179,7 @@ const ProductItemPage = () => {
               <p>Версия ОС: {product.os_version}</p>
               <p>Влагозащита: {product.protection_type}</p>
               <p>Количество SIM: {product.sim_count}</p>
+              <p>RAM: {product.ram}</p>
             </div>
             <div className="flex flex-col gap-2">
               <p className="text-lg font-bold flex flex-row justify-between">
