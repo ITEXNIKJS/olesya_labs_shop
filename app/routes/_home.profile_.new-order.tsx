@@ -134,7 +134,7 @@ const CompleteOrderPage: FC = () => {
 
   return (
     <div className="flex flex-col gap-4 h-full w-full p-4">
-      <Link to="/">
+      <Link to="/catalog">
         <IoIosArrowBack className="font-bold text-2xl" />
       </Link>
       <div className="flex flex-row grow items-center justify-center">
