@@ -1,111 +1,11 @@
-import type { ActionFunctionArgs } from "@remix-run/node";
 import type { LoaderFunctionArgs } from "@remix-run/node";
-import {
-  Form,
-  json,
-  useActionData,
-  useLoaderData,
-  useNavigate,
-} from "@remix-run/react";
+import { Link, json, useLoaderData, useNavigate } from "@remix-run/react";
 import { FC } from "react";
 import { IoIosArrowBack } from "react-icons/io";
 import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
 import { cn } from "~/lib/utils";
 import { authenticator } from "~/services/auth";
 import { db } from "~/services/db";
-
-// Действия для подтверждения заказа
-export const action = async ({ request }: ActionFunctionArgs) => {
-  //  Проверка аутентификации пользователя
-  const user = await authenticator.isAuthenticated(request, {
-    failureRedirect: "/login",
-  });
-
-  const formData = await request.formData();
-
-  const adress = formData.get("address") as string;
-  const index = formData.get("index") as string;
-
-  // Валидируем данные формы
-  if (!adress) {
-    return json(
-      { ok: false, errors: { adress: "Нужно заполнить адрес", index: null } },
-      { status: 400 }
-    );
-  }
-
-  if (!index) {
-    return json(
-      { ok: false, errors: { index: "Нужно заполнить индекс", adress: null } },
-      { status: 400 }
-    );
-  }
-
-  // Получаем кол-во продуктов в корзине
-  const cart_count = await db.products.count({
-    where: {
-      cart: { some: { usersId: user.id } },
-    },
-  });
-
-  if (cart_count === 0) {
-    return json(
-      { ok: false, errors: { index: "Корзина пуста", adress: null } },
-      { status: 400 }
-    );
-  }
-
-  // Выполняем действия в виде транзакций чтобы не засорять базу
-  await db.$transaction(async (tx) => {
-    //  Получаем все продукты в корзине
-    const cart_product = await tx.products.findMany({
-      where: { cart: { some: { usersId: user.id } } },
-      select: {
-        id: true,
-        price: true,
-      },
-    });
-
-    //  Считаем общую стоимость
-    const total = cart_product.reduce((acc, product) => acc + product.price, 0);
-
-    //  Сохраняем заказ
-    const order = await tx.orders.create({
-      data: {
-        total,
-        userId: user.id,
-        adress: adress,
-        index: index,
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    //  Подключаем продукты в заказ
-    await tx.orders.update({
-      where: { id: order.id },
-      data: {
-        products: {
-          connect: cart_product,
-        },
-      },
-    });
-
-    //  Очищаем корзину
-    await tx.cart.update({
-      where: { usersId: user.id },
-      data: {
-        products: {
-          disconnect: cart_product,
-        },
-      },
-    });
-  });
-
-  return json({ ok: true, errors: null });
-};
 
 //  Функция для получения данных с сервера о корзине
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -126,9 +26,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 const ProfileCartPage: FC = () => {
   // Получаем данные с сервера loader
   const { cart } = useLoaderData<typeof loader>();
-
-  //  Получаем результат выполнения action
-  const data = useActionData<typeof action>();
 
   const navigate = useNavigate();
 
@@ -160,42 +57,9 @@ const ProfileCartPage: FC = () => {
                 )}
               </p>
             </div>
-
-            <Form method="post" className="flex flex-col gap-2">
-              <Input
-                type="text"
-                name="address"
-                id="address"
-                placeholder="Адрес доставки"
-                className="w-full"
-              />
-
-              {data?.errors?.adress && (
-                <p className="text-sm text-red-500">{data?.errors.adress}</p>
-              )}
-
-              <Input
-                type="text"
-                name="index"
-                id="index"
-                placeholder="Индекс"
-                className="w-full"
-              />
-
-              {data?.errors?.index && (
-                <p className="text-sm text-red-500">{data?.errors.index}</p>
-              )}
-
-              <Button
-                disabled={cart?.products.length === 0}
-                variant={
-                  cart?.products.length === 0 ? "destructive" : "default"
-                }
-                type="submit"
-              >
-                Оформить заказ
-              </Button>
-            </Form>
+            <Button>
+              <Link to={"/profile/new-order"}>Перейти к оформлению заказа</Link>
+            </Button>
           </div>
 
           {cart?.products.length === 0 ? null : (
