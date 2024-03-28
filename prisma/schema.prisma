@@ -67,3 +67,14 @@ model cart {
   users    users      @relation(fields: [usersId], references: [id])
   products products[]
 }
+
+model statistic {
+  id String @id @default(uuid())
+
+  orders_count  Int
+  orders_sum    Float
+  average_price Float
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
