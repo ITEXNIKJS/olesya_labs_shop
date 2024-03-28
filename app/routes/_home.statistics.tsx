@@ -20,7 +20,7 @@ const Statistics: FC = () => {
         <div className="shadow-md border-slate-200 border p-4 h-[120px] grow flex flex-col justify-between rounded-md">
           <h1>Последняя продажа</h1>
           <span className="self-end text-lg font-semibold">
-            {new Date().toLocaleDateString()}
+            {new Date().toUTCString()}
           </span>
         </div>
       </div>
