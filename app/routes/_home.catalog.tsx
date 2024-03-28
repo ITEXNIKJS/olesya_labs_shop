@@ -80,6 +80,8 @@ const IndexHome: FC = () => {
   }, [data.model, data.price, data.q, data.ram]);
 
   return (
+    <>
+
     <div className="flex flex-row">
       <Form
         id="search-form"
@@ -191,6 +193,7 @@ const IndexHome: FC = () => {
         ))}
       </div>
     </div>
+    </>
   );
 };
 

@@ -29,6 +29,17 @@ function App() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
+
+        <script type="text/javascript" src="/yandex-metrics.js" />
+        <noscript>
+          <div>
+            <img
+              src="https://mc.yandex.ru/watch/96868921"
+              style={{ position: "absolute", left: "-9999px" }}
+              alt=""
+            />
+          </div>
+        </noscript>
       </head>
       <body>
         <Outlet />
