@@ -3,7 +3,7 @@ version: "3"
 services:
   app:
     build:
-      context: .
+      context: ./shop
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
@@ -24,7 +24,7 @@ services:
 
   seed:
     build:
-      context: .
+      context: ./shop
       dockerfile: Dockerfile
     environment:
       DATABASE_URL: postgresql://postgres:root@db:5432/online_shop?schema=public
@@ -37,6 +37,18 @@ services:
         npx prisma migrate deploy &&
         npx prisma db seed
       "
+  bot:
+    build:
+      context: ./bot
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://postgres:root@db:5432/online_shop?schema=public
+      BOT_TOKEN: 6989195297:AAESmvzd68BGr_TFNnrF81-GoFwbdmcc_3c
+    ports:
+      - "80:80"
+    depends_on:
+      - db
+      - app
 
 volumes:
   postgres-data:

@@ -1,0 +1,20 @@
+{
+  "name": "bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "npx tsc && node bot.js"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.6",
+    "prisma": "^5.12.1",
+    "typescript": "^5.4.4"
+  },
+  "dependencies": {
+    "@grammyjs/conversations": "^1.2.0",
+    "@prisma/client": "^5.12.1",
+    "dotenv": "^16.4.5",
+    "grammy": "^1.22.4"
+  }
+}
