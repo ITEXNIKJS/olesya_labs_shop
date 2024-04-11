@@ -298,7 +298,11 @@ async function main() {
     skipDuplicates: true,
   });
 
-  await prisma.statistic.create({})
+  await prisma.statistic.create({data: {
+    average_price: 0,
+    orders_count: 0,
+    orders_sum: 0,
+  }})
 }
 
 main()
