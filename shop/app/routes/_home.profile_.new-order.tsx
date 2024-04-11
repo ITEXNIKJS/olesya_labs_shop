@@ -4,12 +4,7 @@ import {
   json,
   redirect,
 } from "@remix-run/node";
-import {
-  useLoaderData,
-  useActionData,
-  Form,
-  Link,
-} from "@remix-run/react";
+import { useLoaderData, useActionData, Form, Link } from "@remix-run/react";
 import { FC } from "react";
 import { IoIosArrowBack } from "react-icons/io";
 import { Button } from "~/components/ui/button";
@@ -84,6 +79,37 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         id: true,
       },
     });
+
+    const orders = await tx.orders.findMany({
+      select: {
+        total: true,
+      },
+    });
+
+    const stats = await tx.statistic.findFirst({});
+
+    if (!stats) {
+      await tx.statistic.create({
+        data: {
+          orders_count: 1,
+          orders_sum: total,
+          average_price:
+            orders.reduce((acc, order) => acc + order.total, 0) / orders.length,
+        },
+      });
+    } else {
+      await tx.statistic.update({
+        where: {
+          id: stats?.id,
+        },
+        data: {
+          orders_count: { increment: 1 },
+          orders_sum: { increment: total },
+          average_price:
+            orders.reduce((acc, order) => acc + order.total, 0) / orders.length,
+        },
+      });
+    }
 
     //  Подключаем продукты в заказ
     await tx.orders.update({

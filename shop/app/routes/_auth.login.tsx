@@ -14,9 +14,13 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       throwOnError: true,
     });
   } catch (error) {
+    console.log(error);
+
     if (error instanceof Response) return error;
     if (error instanceof AuthorizationError) {
       return json({ error: "Неверный логин или пароль" }, { status: 401 });
+    } else {
+      return error;
     }
   }
 };

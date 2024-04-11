@@ -42,6 +42,10 @@ const ProfileCartPage: FC = () => {
           >
             <div>
               <h1 className="space-x-2 text-lg font-semibold">
+                <p className="inline-block">Артикул корзины</p>
+                <p className="inline-block">{cart?.id}</p>
+              </h1>
+              <h1 className="space-x-2 text-lg font-semibold">
                 <p className="inline-block">{cart?.products.length}</p>
                 <p className="inline-block">товаров</p>
               </h1>
