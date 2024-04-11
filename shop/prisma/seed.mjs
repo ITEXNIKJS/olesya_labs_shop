@@ -297,6 +297,8 @@ async function main() {
     ],
     skipDuplicates: true,
   });
+
+  await prisma.statistic.create({})
 }
 
 main()
